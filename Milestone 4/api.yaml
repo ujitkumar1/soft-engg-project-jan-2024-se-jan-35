@@ -27,7 +27,7 @@ paths:
                 ticket_id:
                   type: integer
                   example: 3
-                          
+
       responses:
         '200':
           description: Successfully got all the responses for the given ticket ID
@@ -40,7 +40,7 @@ paths:
                     type: array
                     items:
                       $ref: ''
-                       
+
                     example:  [{
       "response_id": 2,
       "ticket_id": 1,
@@ -48,10 +48,10 @@ paths:
       "responder_id": 5,
       "response_timestamp": "Fri, 10 Mar 2023 06:36:58 GMT"
     }]
-                  status: 
+                  status:
                     type: string
                     example: success
-                
+
         '403':
           description: Ticket ID is missing
           content:
@@ -72,3 +72,64 @@ paths:
                   message:
                     type: string
                     example: "There are no tickets by that ID."
+
+
+  /api/send_gchat_msg:
+      post:
+        tags:
+          - priority_measure
+        summary: Send message to Gchat if priority is beyond 5.
+        operationId: postAndCheckPriorityMeasure
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - ticket_id
+                  - priority_measure
+                properties:
+                  ticket_id:
+                    type: integer
+                    example: 3
+                  priority_measure:
+                    type: integer
+                    example: 6
+                  message:
+                    type: string
+                    example: "Priority measure exceeded 5. Immediate action required!"
+                  webhook_url:
+                    type: string
+                    format: uri
+                    example: "https://example.com/gchat/webhook"
+        responses:
+          '200':
+            description: Successfully posted ticket and checked priority measure.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                      example: "Message posted successfully."
+          '400':
+            description: Invalid request body.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                      example: "Invalid request body. Please provide valid ticket ID and priority measure."
+          '500':
+            description: Internal server error.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                      example: "Internal server error. Please try again later."
