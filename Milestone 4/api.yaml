@@ -39,7 +39,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Response'
+                      $ref: ''
                        
                     example:  [{
       "response_id": 2,
@@ -72,86 +72,3 @@ paths:
                   message:
                     type: string
                     example: "There are no tickets by that ID."
-      security:
-        - secret_authtoken: []
-
-components:
-  openapi: 3.0.3
-info:
-  title: Sociogrammers Student Query Management System - OpenAPI 3.0
-  description: This API describes the endpoints available for the software created by Team Sociogrammers for the Software Engineering Project.
-  version: "0.0.1"
-
-servers:
-  - url: http://127.0.0.1:5000
-
-
-paths:
-  /api/getResponseAPI_by_ticket:
-    post:
-      tags:
-        - getResponseAPI_by_ticket
-      summary: Provides the responses for a given ticket ID.
-      description: Accessible to all users.
-      operationId: postgetResponseAPI_by_ticket
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - ticket_id
-              properties:
-                ticket_id:
-                  type: integer
-                  example: 3
-                          
-      responses:
-        '200':
-          description: Successfully got all the responses for the given ticket ID
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Response'
-                       
-                    example:  [{
-      "response_id": 2,
-      "ticket_id": 1,
-      "response": "The query you raised has been resolved.",
-      "responder_id": 5,
-      "response_timestamp": "Fri, 10 Mar 2023 06:36:58 GMT"
-    }]
-                  status: 
-                    type: string
-                    example: success
-                
-        '403':
-          description: Ticket ID is missing
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Please provide a ticket ID for which you need the responses."
-        '404':
-          description: "There are no tickets by that ID."
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "There are no tickets by that ID."
-      security:
-        - secret_authtoken: []
-
-components:
-  
