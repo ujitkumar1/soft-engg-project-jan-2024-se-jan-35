@@ -12,7 +12,7 @@ paths:
   /send_gchat_msg:
       post:
         tags:
-          - Support staff
+          - Support Staff
         summary: Send message to Gchat if priority is beyond 5.
         operationId: postAndCheckPriorityMeasure
         requestBody:
@@ -68,6 +68,61 @@ paths:
                     message:
                       type: string
                       example: "Internal server error. Please try again later."
+
+  /submit_previous_discussion_links:
+    post:
+      tags:
+        - Support Staff
+      summary: Submit clickable links for a previous discussion.
+      operationId: postSubmitPreviousDiscussionLinks
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - post_id
+              properties:
+                post_id:
+                  type: integer
+                  example: 123
+                discussion_links:
+                  type: array
+                  items:
+                    type: string
+                    format: uri
+                    example: "https://example.com/previous_discussion1"
+      responses:
+        '200':
+          description: Successfully submitted previous discussion links.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Previous discussion links submitted successfully."
+        '400':
+          description: Invalid request body.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid request body. Please provide a valid post ID."
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal server error. Please try again later."
 
   /check_flagged_posts:
       post:
