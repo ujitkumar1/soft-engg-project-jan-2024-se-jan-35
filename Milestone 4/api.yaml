@@ -9,75 +9,10 @@ servers:
 
 
 paths:
-  /api/getResponseAPI_by_ticket:
-    post:
-      tags:
-        - getResponseAPI_by_ticket
-      summary: Provides the responses for a given ticket ID.
-      description: Accessible to all users.
-      operationId: postgetResponseAPI_by_ticket
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - ticket_id
-              properties:
-                ticket_id:
-                  type: integer
-                  example: 3
-
-      responses:
-        '200':
-          description: Successfully got all the responses for the given ticket ID
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: ''
-
-                    example:  [{
-      "response_id": 2,
-      "ticket_id": 1,
-      "response": "The query you raised has been resolved.",
-      "responder_id": 5,
-      "response_timestamp": "Fri, 10 Mar 2023 06:36:58 GMT"
-    }]
-                  status:
-                    type: string
-                    example: success
-
-        '403':
-          description: Ticket ID is missing
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Please provide a ticket ID for which you need the responses."
-        '404':
-          description: "There are no tickets by that ID."
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "There are no tickets by that ID."
-
-
-  /api/send_gchat_msg:
+  /send_gchat_msg:
       post:
         tags:
-          - priority_measure
+          - Support staff
         summary: Send message to Gchat if priority is beyond 5.
         operationId: postAndCheckPriorityMeasure
         requestBody:
@@ -123,6 +58,70 @@ paths:
                     message:
                       type: string
                       example: "Invalid request body. Please provide valid ticket ID and priority measure."
+          '500':
+            description: Internal server error.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                      example: "Internal server error. Please try again later."
+
+  /check_flagged_posts:
+      post:
+        tags:
+          - Support Manager
+        summary: Check for flagged posts and send message to Support Manager.
+        operationId: postCheckFlaggedPosts
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - post_id
+                  - flag_message
+                  - user_id
+                properties:
+                  post_id:
+                    type: integer
+                    example: 123
+                  flag_message:
+                    type: string
+                    example: "This post contains inappropriate content."
+                  user_id:
+                    type: integer
+                    example: 456
+                  message:
+                    type: string
+                    example: "A post has been flagged. Please check immediately."
+                  webhook_url:
+                    type: string
+                    format: uri
+                    example: "https://example.com/support_manager/webhook"
+        responses:
+          '200':
+            description: Successfully sent message to Support Manager.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                      example: "Message sent to Support Manager about the flagged post."
+          '400':
+            description: Invalid request body.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                      example: "Invalid request body. Please provide valid post ID, flag message, and user ID."
           '500':
             description: Internal server error.
             content:
