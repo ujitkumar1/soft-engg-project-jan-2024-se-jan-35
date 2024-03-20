@@ -9,66 +9,6 @@ servers:
 
 
 paths:
-  /api/getResponseAPI_by_ticket:
-    post:
-      tags: 
-        - getResponseAPI_by_ticket
-      summary: Provides the responses for a given ticket ID.
-      description: Accessible to all users.
-      operationId: postgetResponseAPI_by_ticket
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - ticket_id
-              properties:
-                ticket_id:
-                  type: integer
-                  example: 3                   
-      responses:
-        '200':
-          description: Successfully got all the responses for the given ticket ID
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      example:  [{
-                              "response_id": 2,
-                              "ticket_id": 1,
-                              "response": "The query you raised has been resolved.",
-                              "responder_id": 5,
-                              "response_timestamp": "Fri, 10 Mar 2023 06:36:58 GMT"
-                            }]
-                  status: 
-                    type: string
-                    example: success             
-        '403':
-          description: Ticket ID is missing
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Please provide a ticket ID for which you need the responses."
-        '404':
-          description: "There are no tickets by that ID."
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "There are no tickets by that ID."
-  
   /posts.json:
     description: "API endpoints to performa various tasks on discourse."
     post:
@@ -313,4 +253,105 @@ paths:
                 properties:
                   locked:
                     type: boolean
-      
+  
+  /posts:
+    post:
+      summary: Create a new post with tags.
+      tags:
+        - API endpoints within Online Ticketing App.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                tags:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '201':
+          description: Post created successfully.
+        '400':
+          description: Invalid input.
+  
+  /search_users:
+    get:
+      summary: Search for users to tag.
+      parameters:
+        - in: query
+          name: search_term
+          schema:
+            type: string
+          required: true
+          description: The search term for the user.
+      responses:
+        '200':
+          description: Search results returned.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    username:
+                      type: string
+                    id:
+                      type: string
+        '404':
+          description: No users found.
+
+  /messages:
+    post:
+      summary: Send a Google Chat message.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatMessage'
+      responses:
+        '201':
+          description: Message sent successfully.
+        '400':
+          description: Invalid input.
+
+  /messages/{messageId}:
+    get:
+      summary: Retrieve a specific message by ID.
+      parameters:
+        - in: path
+          name: messageId
+          required: true
+          schema:
+            type: string
+          description: Unique ID of the message.
+      responses:
+        '200':
+          description: Message retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatMessage'
+        '404':
+          description: Message not found.
+
+  /support_staff/activity_status:
+    get:
+      summary: Get the activity status of all support staff members.
+      description: Retrieve a list of support staff members along with their current activity status.
+      responses:
+        '200':
+          description: An array of support staff and their activity statuses.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StaffActivityStatus'
