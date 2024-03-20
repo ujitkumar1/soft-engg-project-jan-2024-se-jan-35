@@ -187,3 +187,145 @@ paths:
                     message:
                       type: string
                       example: "Internal server error. Please try again later."
+
+  /api/getUserDetails:
+    post:
+      tags:
+        - Support Staff
+      summary: Provides details of a specific user by taking user id as parametar.
+      description: Accessible to all users.
+      operationId: postgetUserDetails
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_id
+              properties:
+                ticket_id:
+                  type: integer
+                  example: 1001
+      responses:
+        '200':
+          description: Successfully got all the responses for the given user ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                    example:
+                      - name: Student
+                        email: student@iitm.ds.study.com
+                        role: support staff
+                        member_since: Fri, 10 Mar 2022 06:36:58 GMT
+                  status:
+                    type: string
+                    example: success
+        '403':
+          description: user_id is missing
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Please provide a user id.
+        '404':
+          description: There are no user with this user_id.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: There are no user with user id 1001
+  /api/getSpamUser:
+    post:
+      tags:
+        - Support Manager
+      summary: >-
+        provides data if the user tries to spam the discourse by creating more
+        that a specified no of tickets/discourse threads.
+      description: Accessible to support staff role.
+      operationId: postgetSpamUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - user_id
+              type: object
+              properties:
+                user_id:
+                  type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      isspam:
+                        type: boolean
+                        example: 'Yes'
+                      num_posts:
+                        type: integer
+                        example: 3
+                      list_posts:
+                        type: array
+                        items:
+                          type: object
+        '409':
+          description: User did not allowed to have this data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 1001 not allowed to have this data
+
+  /api/makeThreadFav:
+    post:
+      tags:
+        - Support Staff
+      summary: >-
+        records a thread as a favorite thread for the respective user.
+      description: Accessible to all roles.
+      operationId: postmakeThreadFav
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - user_id
+              type: object
+              properties:
+                user_id:
+                  type: integer
+      responses:
+        '200':
+          description: Request submitted successfully
+
+        '409':
+          description: User id does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 1001 user id does not exist
