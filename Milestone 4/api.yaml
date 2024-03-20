@@ -406,9 +406,7 @@ paths:
                   display_username:
                     type: string
                   primary_group_name:
-                    type:
-                      - string
-                      - 'null'
+                    type: string
                   flair_name:
                     type: string
                   flair_url:
@@ -573,3 +571,155 @@ paths:
                 properties:
                   locked:
                     type: boolean
+  /posts:
+    post:
+      summary: Tag the concern person.
+      tags:
+        - Students
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                tags:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '201':
+          description: Post created successfully.
+        '400':
+          description: Invalid input.
+  
+  /search_users:
+    get:
+      summary: Search for users to tag.
+      tags:
+        - Students
+      parameters:
+        - in: query
+          name: search_term
+          schema:
+            type: string
+          required: true
+          description: The search term for the user.
+      responses:
+        '200':
+          description: Search results returned.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    username:
+                      type: string
+                    id:
+                      type: string
+        '404':
+          description: No users found.
+
+  /messages:
+    post:
+      summary: Send a Google Chat message.
+      tags:
+        - Students
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatMessage'
+      responses:
+        '201':
+          description: Message sent successfully.
+        '400':
+          description: Invalid input.
+
+  /support_staff/activity_status:
+    get:
+      summary: Get the activity status of all support staff members.
+      tags:
+        - Support Manager
+      description: Retrieve a list of support staff members along with their current activity status.
+      responses:
+        '200':
+          description: An array of support staff and their activity statuses.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StaffActivityStatus'
+
+components:
+  schemas:
+    ChatMessage:
+      type: object
+      required:
+        - threadId
+        - text
+      properties:
+        threadId:
+          type: string
+          description: Unique identifier for the Google Chat thread.
+        text:
+          type: string
+          description: The text content of the message.
+        urgent:
+          type: boolean
+          description: Flag to indicate if the message is for an urgent issue.
+        ticketId:
+          type: string
+          description: The associated ticket or issue ID.
+    StaffActivityStatus:
+      type: object
+      required:
+        - username
+        - isActive
+        - lastActiveTime
+      properties:
+        username:
+          type: string
+          description: The username of the support staff member.
+        isActive:
+          type: boolean
+          description: A boolean flag indicating whether the staff member is currently active.
+        lastActiveTime:
+          type: string
+          format: datetime
+          description: The last known active timestamp of the support staff member.
+    Post:
+      type: object
+      required:
+        - title
+        - description
+        - tags
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserTag'
+
+    UserTag:
+      type: object
+      properties:
+        username:
+          type: string
+        id:
+          type: string
+
+security:
+  - BearerAuth: []
+  - ApiKeyAuth: []
