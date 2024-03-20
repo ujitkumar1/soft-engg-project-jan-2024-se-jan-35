@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Sociogrammers Student Query Management System - OpenAPI 3.0
-  description: This API describes the endpoints that have been created to integrate discourse & Gchat and for enhancement of existing Online Ticketing app for IITM BS programme.
+  description: This API describes the endpoints available for the software created by Team Sociogrammers for the Software Engineering Project.
   version: "0.0.1"
 
 servers:
@@ -9,27 +9,206 @@ servers:
 
 
 paths:
-  /api/getResponseAPI_by_ticket:
+  /send_gchat_msg:
+      post:
+        tags:
+          - Support Staff
+        summary: Send message to Gchat if priority is beyond 5.
+        operationId: postAndCheckPriorityMeasure
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - ticket_id
+                  - priority_measure
+                properties:
+                  ticket_id:
+                    type: integer
+                    example: 3
+                  priority_measure:
+                    type: integer
+                    example: 6
+                  message:
+                    type: string
+                    example: "Priority measure exceeded 5. Immediate action required!"
+                  webhook_url:
+                    type: string
+                    format: uri
+                    example: "https://example.com/gchat/webhook"
+        responses:
+          '200':
+            description: Successfully posted ticket and checked priority measure.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                      example: "Message posted successfully."
+          '400':
+            description: Invalid request body.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                      example: "Invalid request body. Please provide valid ticket ID and priority measure."
+          '500':
+            description: Internal server error.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                      example: "Internal server error. Please try again later."
+
+  /submit_previous_discussion_links:
     post:
-      tags: 
-        - getResponseAPI_by_ticket
-      summary: Provides the responses for a given ticket ID.
-      description: Accessible to all users.
-      operationId: postgetResponseAPI_by_ticket
+      tags:
+        - Support Staff
+      summary: Submit clickable links for a previous discussion.
+      operationId: postSubmitPreviousDiscussionLinks
       requestBody:
         content:
           application/json:
             schema:
               type: object
               required:
-                - ticket_id
+                - post_id
+              properties:
+                post_id:
+                  type: integer
+                  example: 123
+                discussion_links:
+                  type: array
+                  items:
+                    type: string
+                    format: uri
+                    example: "https://example.com/previous_discussion1"
+      responses:
+        '200':
+          description: Successfully submitted previous discussion links.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Previous discussion links submitted successfully."
+        '400':
+          description: Invalid request body.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid request body. Please provide a valid post ID."
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal server error. Please try again later."
+
+  /check_flagged_posts:
+      post:
+        tags:
+          - Support Manager
+        summary: Check for flagged posts and send message to Support Manager.
+        operationId: postCheckFlaggedPosts
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - post_id
+                  - flag_message
+                  - user_id
+                properties:
+                  post_id:
+                    type: integer
+                    example: 123
+                  flag_message:
+                    type: string
+                    example: "This post contains inappropriate content."
+                  user_id:
+                    type: integer
+                    example: 456
+                  message:
+                    type: string
+                    example: "A post has been flagged. Please check immediately."
+                  webhook_url:
+                    type: string
+                    format: uri
+                    example: "https://example.com/support_manager/webhook"
+        responses:
+          '200':
+            description: Successfully sent message to Support Manager.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                      example: "Message sent to Support Manager about the flagged post."
+          '400':
+            description: Invalid request body.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                      example: "Invalid request body. Please provide valid post ID, flag message, and user ID."
+          '500':
+            description: Internal server error.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                      example: "Internal server error. Please try again later."
+
+  /api/getUserDetails:
+    post:
+      tags:
+        - Support Staff
+      summary: Provides details of a specific user by taking user id as parametar.
+      description: Accessible to all users.
+      operationId: postgetUserDetails
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_id
               properties:
                 ticket_id:
                   type: integer
-                  example: 3                   
+                  example: 1001
       responses:
         '200':
-          description: Successfully got all the responses for the given ticket ID
+          description: Successfully got all the responses for the given user ID
           content:
             application/json:
               schema:
@@ -38,18 +217,17 @@ paths:
                   data:
                     type: array
                     items:
-                      example:  [{
-                              "response_id": 2,
-                              "ticket_id": 1,
-                              "response": "The query you raised has been resolved.",
-                              "responder_id": 5,
-                              "response_timestamp": "Fri, 10 Mar 2023 06:36:58 GMT"
-                            }]
-                  status: 
+                      type: object
+                    example:
+                      - name: Student
+                        email: student@iitm.ds.study.com
+                        role: support staff
+                        member_since: Fri, 10 Mar 2022 06:36:58 GMT
+                  status:
                     type: string
-                    example: success             
+                    example: success
         '403':
-          description: Ticket ID is missing
+          description: user_id is missing
           content:
             application/json:
               schema:
@@ -57,9 +235,9 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "Please provide a ticket ID for which you need the responses."
+                    example: Please provide a user id.
         '404':
-          description: "There are no tickets by that ID."
+          description: There are no user with this user_id.
           content:
             application/json:
               schema:
@@ -67,14 +245,96 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "There are no tickets by that ID."
-  
+                    example: There are no user with user id 1001
+  /api/getSpamUser:
+    post:
+      tags:
+        - Support Manager
+      summary: >-
+        provides data if the user tries to spam the discourse by creating more
+        that a specified no of tickets/discourse threads.
+      description: Accessible to support staff role.
+      operationId: postgetSpamUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - user_id
+              type: object
+              properties:
+                user_id:
+                  type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      isspam:
+                        type: boolean
+                        example: 'Yes'
+                      num_posts:
+                        type: integer
+                        example: 3
+                      list_posts:
+                        type: array
+                        items:
+                          type: object
+        '409':
+          description: User did not allowed to have this data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 1001 not allowed to have this data
+
+  /api/makeThreadFav:
+    post:
+      tags:
+        - Support Staff
+      summary: >-
+        records a thread as a favorite thread for the respective user.
+      description: Accessible to all roles.
+      operationId: postmakeThreadFav
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - user_id
+              type: object
+              properties:
+                user_id:
+                  type: integer
+      responses:
+        '200':
+          description: Request submitted successfully
+
+        '409':
+          description: User id does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 1001 user id does not exist
   /posts.json:
     description: "API endpoints to performa various tasks on discourse."
     post:
       description: 'Api for creating a query or replying on a query on discourse'
       tags:
-        - Discourse API Endpoints
+        - Support Staff & Student
       requestBody:
         content:
           application/json:
@@ -147,8 +407,8 @@ paths:
                     type: string
                   primary_group_name:
                     type:
-                    - string
-                    - 'null'
+                      - string
+                      - 'null'
                   flair_name:
                     type: string
                   flair_url:
@@ -186,8 +446,8 @@ paths:
                         can_act:
                           type: boolean
                       required:
-                      - id
-                      - can_act
+                        - id
+                        - can_act
                   moderator:
                     type: boolean
                   admin:
@@ -220,79 +480,79 @@ paths:
                     type: integer
                   mentioned_users:
                     type: array
-                    items: {}
+                    items: { }
                 required:
-                - id
-                - name
-                - username
-                - avatar_template
-                - created_at
-                - cooked
-                - post_number
-                - post_type
-                - updated_at
-                - reply_count
-                - reply_to_post_number
-                - quote_count
-                - incoming_link_count
-                - reads
-                - readers_count
-                - score
-                - yours
-                - topic_id
-                - topic_slug
-                - display_username
-                - primary_group_name
-                - flair_name
-                - flair_url
-                - flair_bg_color
-                - flair_color
-                - version
-                - can_edit
-                - can_delete
-                - can_recover
-                - can_wiki
-                - user_title
-                - bookmarked
-                - actions_summary
-                - moderator
-                - admin
-                - staff
-                - user_id
-                - draft_sequence
-                - hidden
-                - trust_level
-                - deleted_at
-                - user_deleted
-                - edit_reason
-                - can_view_edit_history
-                - wiki
-                - reviewable_id
-                - reviewable_score_count
-                - reviewable_score_pending_count
+                  - id
+                  - name
+                  - username
+                  - avatar_template
+                  - created_at
+                  - cooked
+                  - post_number
+                  - post_type
+                  - updated_at
+                  - reply_count
+                  - reply_to_post_number
+                  - quote_count
+                  - incoming_link_count
+                  - reads
+                  - readers_count
+                  - score
+                  - yours
+                  - topic_id
+                  - topic_slug
+                  - display_username
+                  - primary_group_name
+                  - flair_name
+                  - flair_url
+                  - flair_bg_color
+                  - flair_color
+                  - version
+                  - can_edit
+                  - can_delete
+                  - can_recover
+                  - can_wiki
+                  - user_title
+                  - bookmarked
+                  - actions_summary
+                  - moderator
+                  - admin
+                  - staff
+                  - user_id
+                  - draft_sequence
+                  - hidden
+                  - trust_level
+                  - deleted_at
+                  - user_deleted
+                  - edit_reason
+                  - can_view_edit_history
+                  - wiki
+                  - reviewable_id
+                  - reviewable_score_count
+                  - reviewable_score_pending_count
 
   /posts/{id}/locked.json:
     put:
       description: Lock a post from being edited
       tags:
-      - Discourse API Endpoints
+        - Support Staff
       operationId: lockPost
       parameters:
-      - name: Api-Key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Api-Username
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: id
-        in: path
-        schema:
-          type: string
-        required: true
+        - name: Api-Key
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: Api-Username
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
       requestBody:
         content:
           application/json:
@@ -302,7 +562,7 @@ paths:
                 locked:
                   type: string
               required:
-              - locked
+                - locked
       responses:
         '200':
           description: post updated
@@ -313,4 +573,3 @@ paths:
                 properties:
                   locked:
                     type: boolean
-      
