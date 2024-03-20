@@ -972,6 +972,33 @@ paths:
                   message:
                     type: string
                     example: "Internal server error. Please try again later."
+  /profile:
+    get:
+      description: "Get user's profile"
+      tags:
+        - Students
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user_id:
+                    type: integer
+                  name:
+                    type: string
+                  email:
+                    type: string
 
 components:
   schemas:
