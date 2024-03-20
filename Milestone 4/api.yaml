@@ -188,10 +188,10 @@ paths:
                       type: string
                       example: "Internal server error. Please try again later."
 
-  /api/getUserDetails:
+  /profile:
     post:
       tags:
-        - Support Staff
+        - Students
       summary: Provides details of a specific user by taking user id as parametar.
       description: Accessible to all users.
       operationId: postgetUserDetails
@@ -203,7 +203,7 @@ paths:
               required:
                 - user_id
               properties:
-                ticket_id:
+                user_id:
                   type: integer
                   example: 1001
       responses:
@@ -246,7 +246,7 @@ paths:
                   message:
                     type: string
                     example: There are no user with user id 1001
-  /api/getSpamUser:
+  /getSpamUser:
     post:
       tags:
         - Support Manager
@@ -297,7 +297,7 @@ paths:
                     type: string
                     example: 1001 not allowed to have this data
 
-  /api/makeThreadFav:
+  /makeThreadFav:
     post:
       tags:
         - Support Staff
@@ -311,9 +311,12 @@ paths:
             schema:
               required:
                 - user_id
+                - post_id
               type: object
               properties:
                 user_id:
+                  type: integer
+                post_id:
                   type: integer
       responses:
         '200':
@@ -536,12 +539,12 @@ paths:
         - Support Staff
       operationId: lockPost
       parameters:
-        - name: Api-Key
+        - name: api-key
           in: header
           required: true
           schema:
             type: string
-        - name: Api-Username
+        - name: api-username
           in: header
           required: true
           schema:
@@ -972,33 +975,7 @@ paths:
                   message:
                     type: string
                     example: "Internal server error. Please try again later."
-  /profile:
-    get:
-      description: "Get user's profile"
-      tags:
-        - Students
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                user_id:
-                  type: integer
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  user_id:
-                    type: integer
-                  name:
-                    type: string
-                  email:
-                    type: string
+  
 
 components:
   schemas:
@@ -1060,4 +1037,3 @@ components:
           type: string
         id:
           type: string
-
