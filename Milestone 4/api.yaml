@@ -891,6 +891,88 @@ paths:
                   message:
                     type: string
                     example: "Internal server error. Please try again later."
+
+  /api/search_discussions_by_category:
+    get:
+      tags:
+        - Students
+      summary: Filter based on category and tag.
+      operationId: getSearchByCategory
+      parameters:
+        - name: category
+          in: query
+          description: Tag to search discussions for.
+          required: true
+          schema:
+            type: string
+            example: "python"
+        - name: tag
+          in: query
+          description: Tag to search discussions for.
+          required: true
+          schema:
+            type: string
+            example: "quiz-2"
+
+      responses:
+        '200':
+          description: Successfully retrieved discussions matching the tag.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    discussion_id:
+                      type: integer
+                      example: 123
+                    title:
+                      type: string
+                      example: "Python Basics"
+                    description:
+                      type: string
+                      example: "Discussion about basic Python concepts."
+                    tags:
+                      type: array
+                      items:
+                        type: string
+                      example: [ "python", "beginner" ]
+                    link:
+                      type: string
+                      format: uri
+                      example: "https://example.com/discussion/123"
+        '400':
+          description: Invalid request.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid request. Please provide a valid tag."
+        '404':
+          description: No discussions found for the provided tag.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "No discussions found for the provided tag."
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal server error. Please try again later."
+
 components:
   schemas:
     ChatMessage:
@@ -952,6 +1034,3 @@ components:
         id:
           type: string
 
-security:
-  - BearerAuth: []
-  - ApiKeyAuth: []
