@@ -11,7 +11,7 @@ servers:
 paths:
   /api/getResponseAPI_by_ticket:
     post:
-      tags:
+      tags: 
         - getResponseAPI_by_ticket
       summary: Provides the responses for a given ticket ID.
       description: Accessible to all users.
@@ -26,8 +26,7 @@ paths:
               properties:
                 ticket_id:
                   type: integer
-                  example: 3
-                          
+                  example: 3                   
       responses:
         '200':
           description: Successfully got all the responses for the given ticket ID
@@ -39,19 +38,16 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: ''
-                       
-                    example:  [{
-      "response_id": 2,
-      "ticket_id": 1,
-      "response": "The query you raised has been resolved.",
-      "responder_id": 5,
-      "response_timestamp": "Fri, 10 Mar 2023 06:36:58 GMT"
-    }]
+                      example:  [{
+                              "response_id": 2,
+                              "ticket_id": 1,
+                              "response": "The query you raised has been resolved.",
+                              "responder_id": 5,
+                              "response_timestamp": "Fri, 10 Mar 2023 06:36:58 GMT"
+                            }]
                   status: 
                     type: string
-                    example: success
-                
+                    example: success             
         '403':
           description: Ticket ID is missing
           content:
@@ -72,6 +68,7 @@ paths:
                   message:
                     type: string
                     example: "There are no tickets by that ID."
+  
   /posts.json:
     description: "API endpoints to performa various tasks on discourse."
     post:
@@ -83,6 +80,8 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+                - raw
               properties:
                 title:
                   type: string
@@ -96,8 +95,6 @@ paths:
                   type: string
                 reply_to_post_number:
                   type: integer
-            required:
-              -raw
       responses:
         '200':
           description: post created
@@ -273,3 +270,47 @@ paths:
                 - reviewable_id
                 - reviewable_score_count
                 - reviewable_score_pending_count
+
+  /posts/{id}/locked.json:
+    put:
+      description: Lock a post from being edited
+      tags:
+      - Discourse API Endpoints
+      operationId: lockPost
+      parameters:
+      - name: Api-Key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Api-Username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        schema:
+          type: string
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                locked:
+                  type: string
+              required:
+              - locked
+      responses:
+        '200':
+          description: post updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  locked:
+                    type: boolean
+      
