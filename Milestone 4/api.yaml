@@ -658,7 +658,166 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/StaffActivityStatus'
+  /analytics/all_issues:
+  
+      get:
+        tags:
+        - Analytics
+        summary: Get pie chart for resolved and pending threads along with a JSON of each category with number of open threads.
+        operationId: getThreadStatusChart
+        responses:
+          '200':
+            description: Successfully retrieved thread status chart.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    image:
+                      type: string
+                      format: binary
+                      description: A pie chart image showing the distribution of resolved and pending threads.
+                    resolved:
+                      type: integer
+                      example: 10
+                    pending:
+                      type: integer
+                      example: 5
+                    categories:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            example: "Category 1"
+                          open_threads:
+                            type: integer
+                            example: 3
+                            
 
+          '400':
+            description: Invalid request.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                      example: "Invalid request. Please try again."
+          '500':
+            description: Internal server error.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                      example: "Internal server error. Please try again later."
+
+
+  /analytics/isses_resolved:
+    get:
+      tags:
+        - Analytics
+      summary: Fetch pie chart image and JSON containing time grouping of resolved threads.
+      operationId: getIssuesResolved
+      responses:
+        '200':
+          description: Successfully fetched data.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  image:
+                    type: string
+                    format: binary
+                    description: A pie chart image showing the distribution of resolved threads in different time groups.
+                  time_groups:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        group:
+                          type: string
+                          example: "1-3 hrs"
+                        threads_resolved:
+                          type: integer
+                          example: 5
+        '400':
+          description: Invalid request.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid request. Please try again."
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal server error. Please try again later."
+  
+  /analytics/staff:
+    get:
+      tags:
+        - Analytics
+      summary: Fetch staff analytics data.
+      operationId: getStaffAnalytics
+      responses:
+        '200':
+          description: Successfully fetched data.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    staff_name:
+                      type: string
+                      example: "John Doe"
+                    active_tickets:
+                      type: integer
+                      example: 3
+                    resolved_tickets:
+                      type: integer
+                      example: 7
+                    subjects:
+                      type: array
+                      items:
+                        type: string
+                        example: "Mathematics"
+        '400':
+          description: Invalid request.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid request. Please try again."
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal server error. Please try again later."
 components:
   schemas:
     ChatMessage:
