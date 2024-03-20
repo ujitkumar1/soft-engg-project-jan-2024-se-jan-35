@@ -1,7 +1,8 @@
 openapi: 3.0.3
 info:
-  title: Sociogrammers Student Query Management System - OpenAPI 3.0
-  description: This API describes the endpoints available for the software created by Team Sociogrammers for the Software Engineering Project.
+  title: Jaadu API (by Team Dhoop)
+  description: This API describes the endpoints available for Jaadu API which integrates ticket management app with discourse API for SE Project. 
+    For more information contact us [here](mailto:21f1003251@ds.study.iitm.ac.in)
   version: "0.0.1"
 
 servers:
@@ -648,10 +649,10 @@ paths:
 
   /support_staff/activity_status:
     get:
-      summary: Get the activity status of all support staff members.
+      summary: Get the list of all support staff members which are not responding.
       tags:
         - Support Manager
-      description: Retrieve a list of support staff members along with their current activity status.
+      description: Get the list of all support staff members which are not responding.
       responses:
         '200':
           description: An array of support staff and their activity statuses.
