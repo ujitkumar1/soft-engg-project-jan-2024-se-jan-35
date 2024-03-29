@@ -1,7 +1,8 @@
 openapi: 3.0.3
 info:
-  title: Sociogrammers Student Query Management System - OpenAPI 3.0
-  description: This API describes the endpoints available for the software created by Team Sociogrammers for the Software Engineering Project.
+  title: Jaadu API (by Team Dhoop)
+  description: This API describes the endpoints available for Jaadu API which integrates ticket management app with discourse API for SE Project. 
+    For more information contact us [here](mailto:21f1003251@ds.study.iitm.ac.in)
   version: "0.0.1"
 
 servers:
@@ -187,3 +188,853 @@ paths:
                     message:
                       type: string
                       example: "Internal server error. Please try again later."
+
+  /profile:
+    post:
+      tags:
+        - Students
+      summary: Provides details of a specific user by taking user id as parametar.
+      description: Accessible to all users.
+      operationId: postgetUserDetails
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_id
+              properties:
+                user_id:
+                  type: integer
+                  example: 1001
+      responses:
+        '200':
+          description: Successfully got all the responses for the given user ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                    example:
+                      - name: Student
+                        email: student@iitm.ds.study.com
+                        role: support staff
+                        member_since: Fri, 10 Mar 2022 06:36:58 GMT
+                  status:
+                    type: string
+                    example: success
+        '403':
+          description: user_id is missing
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Please provide a user id.
+        '404':
+          description: There are no user with this user_id.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: There are no user with user id 1001
+  /getSpamUser:
+    post:
+      tags:
+        - Support Manager
+      summary: >-
+        provides data if the user tries to spam the discourse by creating more
+        that a specified no of tickets/discourse threads.
+      description: Accessible to support staff role.
+      operationId: postgetSpamUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - user_id
+              type: object
+              properties:
+                user_id:
+                  type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      isspam:
+                        type: boolean
+                        example: 'Yes'
+                      num_posts:
+                        type: integer
+                        example: 3
+                      list_posts:
+                        type: array
+                        items:
+                          type: object
+        '409':
+          description: User did not allowed to have this data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 1001 not allowed to have this data
+
+  /makeThreadFav:
+    post:
+      tags:
+        - Support Staff
+      summary: >-
+        records a thread as a favorite thread for the respective user.
+      description: Accessible to all roles.
+      operationId: postmakeThreadFav
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - user_id
+                - post_id
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                post_id:
+                  type: integer
+      responses:
+        '200':
+          description: Request submitted successfully
+
+        '409':
+          description: User id does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 1001 user id does not exist
+  /posts.json:
+    description: "API endpoints to performa various tasks on discourse."
+    post:
+      description: 'Api for creating a query or replying on a query on discourse'
+      tags:
+        - Support Staff & Student
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - raw
+              properties:
+                title:
+                  type: string
+                raw:
+                  type: string
+                topic_id:
+                  type: integer
+                category:
+                  type: integer
+                created_at:
+                  type: string
+                reply_to_post_number:
+                  type: integer
+      responses:
+        '200':
+          description: post created
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  username:
+                    type: string
+                  avatar_template:
+                    type: string
+                  created_at:
+                    type: string
+                  raw:
+                    type: string
+                  cooked:
+                    type: string
+                  post_number:
+                    type: integer
+                  post_type:
+                    type: integer
+                  updated_at:
+                    type: string
+                  reply_count:
+                    type: integer
+                  reply_to_post_number:
+                    type: string
+                  quote_count:
+                    type: integer
+                  incoming_link_count:
+                    type: integer
+                  reads:
+                    type: integer
+                  readers_count:
+                    type: integer
+                  score:
+                    type: number
+                  yours:
+                    type: boolean
+                  topic_id:
+                    type: integer
+                  topic_slug:
+                    type: string
+                  display_username:
+                    type: string
+                  primary_group_name:
+                    type: string
+                  flair_name:
+                    type: string
+                  flair_url:
+                    type: string
+                  flair_bg_color:
+                    type: string
+                  flair_color:
+                    type: string
+                  flair_group_id:
+                    type: string
+                  version:
+                    type: integer
+                  can_edit:
+                    type: boolean
+                  can_delete:
+                    type: boolean
+                  can_recover:
+                    type: boolean
+                  can_see_hidden_post:
+                    type: boolean
+                  can_wiki:
+                    type: boolean
+                  user_title:
+                    type: string
+                  bookmarked:
+                    type: boolean
+                  actions_summary:
+                    type: array
+                    items:
+                      type: object
+                      additionalProperties: false
+                      properties:
+                        id:
+                          type: integer
+                        can_act:
+                          type: boolean
+                      required:
+                        - id
+                        - can_act
+                  moderator:
+                    type: boolean
+                  admin:
+                    type: boolean
+                  staff:
+                    type: boolean
+                  user_id:
+                    type: integer
+                  draft_sequence:
+                    type: integer
+                  hidden:
+                    type: boolean
+                  trust_level:
+                    type: integer
+                  deleted_at:
+                    type: string
+                  user_deleted:
+                    type: boolean
+                  edit_reason:
+                    type: string
+                  can_view_edit_history:
+                    type: boolean
+                  wiki:
+                    type: boolean
+                  reviewable_id:
+                    type: string
+                  reviewable_score_count:
+                    type: integer
+                  reviewable_score_pending_count:
+                    type: integer
+                  mentioned_users:
+                    type: array
+                    items: { }
+                required:
+                  - id
+                  - name
+                  - username
+                  - avatar_template
+                  - created_at
+                  - cooked
+                  - post_number
+                  - post_type
+                  - updated_at
+                  - reply_count
+                  - reply_to_post_number
+                  - quote_count
+                  - incoming_link_count
+                  - reads
+                  - readers_count
+                  - score
+                  - yours
+                  - topic_id
+                  - topic_slug
+                  - display_username
+                  - primary_group_name
+                  - flair_name
+                  - flair_url
+                  - flair_bg_color
+                  - flair_color
+                  - version
+                  - can_edit
+                  - can_delete
+                  - can_recover
+                  - can_wiki
+                  - user_title
+                  - bookmarked
+                  - actions_summary
+                  - moderator
+                  - admin
+                  - staff
+                  - user_id
+                  - draft_sequence
+                  - hidden
+                  - trust_level
+                  - deleted_at
+                  - user_deleted
+                  - edit_reason
+                  - can_view_edit_history
+                  - wiki
+                  - reviewable_id
+                  - reviewable_score_count
+                  - reviewable_score_pending_count
+
+  /posts/{id}/locked.json:
+    put:
+      description: Lock a post from being edited
+      tags:
+        - Support Staff
+      operationId: lockPost
+      parameters:
+        - name: api-key
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: api-username
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                locked:
+                  type: string
+              required:
+                - locked
+      responses:
+        '200':
+          description: post updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  locked:
+                    type: boolean
+  /posts:
+    post:
+      summary: Tag the concern person.
+      tags:
+        - Students
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                tags:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '201':
+          description: Post created successfully.
+        '400':
+          description: Invalid input.
+
+  /search_users:
+    get:
+      summary: Search for users to tag.
+      tags:
+        - Students
+      parameters:
+        - in: query
+          name: search_term
+          schema:
+            type: string
+          required: true
+          description: The search term for the user.
+      responses:
+        '200':
+          description: Search results returned.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    username:
+                      type: string
+                    id:
+                      type: string
+        '404':
+          description: No users found.
+
+  /messages:
+    post:
+      summary: Send a Google Chat message.
+      tags:
+        - Students
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatMessage'
+      responses:
+        '201':
+          description: Message sent successfully.
+        '400':
+          description: Invalid input.
+
+  /support_staff/activity_status:
+    get:
+      summary: Get the list of all support staff members which are not responding.
+      tags:
+        - Support Manager
+      description: Get the list of all support staff members which are not responding.
+      responses:
+        '200':
+          description: An array of support staff and their activity statuses.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StaffActivityStatus'
+  /analytics/all_issues:
+
+      get:
+        tags:
+        - Analytics
+        summary: Get pie chart for resolved and pending threads along with a JSON of each category with number of open threads.
+        operationId: getThreadStatusChart
+        responses:
+          '200':
+            description: Successfully retrieved thread status chart.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    image:
+                      type: string
+                      format: binary
+                      description: A pie chart image showing the distribution of resolved and pending threads.
+                    resolved:
+                      type: integer
+                      example: 10
+                    pending:
+                      type: integer
+                      example: 5
+                    categories:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            example: "Category 1"
+                          open_threads:
+                            type: integer
+                            example: 3
+
+
+          '400':
+            description: Invalid request.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                      example: "Invalid request. Please try again."
+          '500':
+            description: Internal server error.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                      example: "Internal server error. Please try again later."
+
+
+  /analytics/isses_resolved:
+    get:
+      tags:
+        - Analytics
+      summary: Fetch pie chart image and JSON containing time grouping of resolved threads.
+      operationId: getIssuesResolved
+      responses:
+        '200':
+          description: Successfully fetched data.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  image:
+                    type: string
+                    format: binary
+                    description: A pie chart image showing the distribution of resolved threads in different time groups.
+                  time_groups:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        group:
+                          type: string
+                          example: "1-3 hrs"
+                        threads_resolved:
+                          type: integer
+                          example: 5
+        '400':
+          description: Invalid request.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid request. Please try again."
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal server error. Please try again later."
+
+  /analytics/staff:
+    get:
+      tags:
+        - Analytics
+      summary: Fetch staff analytics data.
+      operationId: getStaffAnalytics
+      responses:
+        '200':
+          description: Successfully fetched data.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    staff_name:
+                      type: string
+                      example: "John Doe"
+                    active_tickets:
+                      type: integer
+                      example: 3
+                    resolved_tickets:
+                      type: integer
+                      example: 7
+                    subjects:
+                      type: array
+                      items:
+                        type: string
+                        example: "Mathematics"
+        '400':
+          description: Invalid request.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid request. Please try again."
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal server error. Please try again later."
+
+  /api/search_discussions_by_tag:
+    get:
+      tags:
+        - Students
+      summary: Search discussions based on a tag.
+      operationId: getSearchDiscussionsByTag
+      parameters:
+        - name: tag
+          in: query
+          description: Tag to search discussions for.
+          required: true
+          schema:
+            type: string
+            example: "python"
+      responses:
+        '200':
+          description: Successfully retrieved discussions matching the tag.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    discussion_id:
+                      type: integer
+                      example: 123
+                    title:
+                      type: string
+                      example: "Python Basics"
+                    description:
+                      type: string
+                      example: "Discussion about basic Python concepts."
+                    tags:
+                      type: array
+                      items:
+                        type: string
+                      example: [ "python", "beginner" ]
+                    link:
+                      type: string
+                      format: uri
+                      example: "https://example.com/discussion/123"
+        '400':
+          description: Invalid request.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid request. Please provide a valid tag."
+        '404':
+          description: No discussions found for the provided tag.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "No discussions found for the provided tag."
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal server error. Please try again later."
+
+  /api/search_discussions_by_category:
+    get:
+      tags:
+        - Students
+      summary: Filter based on category and tag.
+      operationId: getSearchByCategory
+      parameters:
+        - name: category
+          in: query
+          description: Tag to search discussions for.
+          required: true
+          schema:
+            type: string
+            example: "python"
+        - name: tag
+          in: query
+          description: Tag to search discussions for.
+          required: true
+          schema:
+            type: string
+            example: "quiz-2"
+
+      responses:
+        '200':
+          description: Successfully retrieved discussions matching the tag.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    discussion_id:
+                      type: integer
+                      example: 123
+                    title:
+                      type: string
+                      example: "Python Basics"
+                    description:
+                      type: string
+                      example: "Discussion about basic Python concepts."
+                    tags:
+                      type: array
+                      items:
+                        type: string
+                      example: [ "python", "beginner" ]
+                    link:
+                      type: string
+                      format: uri
+                      example: "https://example.com/discussion/123"
+        '400':
+          description: Invalid request.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid request. Please provide a valid tag."
+        '404':
+          description: No discussions found for the provided tag.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "No discussions found for the provided tag."
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal server error. Please try again later."
+  
+
+components:
+  schemas:
+    ChatMessage:
+      type: object
+      required:
+        - threadId
+        - text
+      properties:
+        threadId:
+          type: string
+          description: Unique identifier for the Google Chat thread.
+        text:
+          type: string
+          description: The text content of the message.
+        urgent:
+          type: boolean
+          description: Flag to indicate if the message is for an urgent issue.
+        ticketId:
+          type: string
+          description: The associated ticket or issue ID.
+    StaffActivityStatus:
+      type: object
+      required:
+        - username
+        - isActive
+        - lastActiveTime
+      properties:
+        username:
+          type: string
+          description: The username of the support staff member.
+        isActive:
+          type: boolean
+          description: A boolean flag indicating whether the staff member is currently active.
+        lastActiveTime:
+          type: string
+          format: datetime
+          description: The last known active timestamp of the support staff member.
+    Post:
+      type: object
+      required:
+        - title
+        - description
+        - tags
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserTag'
+
+    UserTag:
+      type: object
+      properties:
+        username:
+          type: string
+        id:
+          type: string
