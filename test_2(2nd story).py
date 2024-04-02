@@ -1,7 +1,7 @@
 import pytest
 import requests
 from requests_mock import Mocker
-# from your_application import app
+# from application import app
 
 #app needs to be imported
 @pytest.fixture
