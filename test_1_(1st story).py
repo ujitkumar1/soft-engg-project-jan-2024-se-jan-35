@@ -1,6 +1,6 @@
 import json
 import pytest
-from api_module import app
+# from api_module import app
 
 #app needs to be imported
 @pytest.fixture
