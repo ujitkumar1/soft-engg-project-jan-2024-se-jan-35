@@ -1,0 +1,1341 @@
+openapi: 3.0.3
+info:
+  title: Group-2 Ticket system API
+  description: |
+    <div>
+        This RESTful API, database models has been created using Flask-RESTful and flask-SQLAlchemy.
+    </div>
+    <h3> User Table Schema </h3>
+    <table>
+        <thead>
+            <th>Column Name</th>
+            <th>Column Type</th>
+            <th>Constraints</th>
+        </thead>
+        <tbody>
+            <tr>
+                <td>user_id</td>
+                <td>Integer</td>
+                <td>Primary Key, Auto Increment</td>
+            </tr>
+            <tr>
+                <td>username</td>
+                <td>String</td>
+                <td>Not Null</td>
+            </tr>
+            <tr>
+                <td>email</td>
+                <td>String</td>
+                <td>Not Null</td>
+            </tr>
+            <tr>
+                <td>password</td>
+                <td>String</td>
+                <td>Not Null</td>
+            </tr>
+            <tr>
+                <td>role</td>
+                <td>String</td>
+                <td>Not Null</td>
+            </tr>
+        </tbody>
+    </table>
+    <h3> Staff Table Schema </h3>
+    <table>
+        <thead>
+            <th>Column Name</th>
+            <th>Column Type</th>
+            <th>Constraints</th>
+        </thead>
+        <tbody>
+            <tr>
+                <td>user_id</td>
+                <td>Integer</td>
+                <td>Foreign Key(User.user_id)</td>
+            </tr>
+            <tr>
+                <td>status</td>
+                <td>Boolean</td>
+                <td>Not Null, Default=False</td>
+            </tr>
+            <tr>
+                <td>subject_id</td>
+                <td>Integer</td>
+                <td>Foreign Key(Subject_Tag.subject_id), Not Null</td>
+            </tr>
+        </tbody>
+    </table>
+    <h3> Subject Tag Schema </h3>
+    <table>
+        <thead>
+            <th>Column Name</th>
+            <th>Column Type</th>
+            <th>Constraints</th>
+        </thead>
+        <tbody>
+            <tr>
+                <td>subject_id</td>
+                <td>Integer</td>
+                <td>Primary Key, Auto Increment</td>
+            </tr>
+            <tr>
+                <td>subject_name</td>
+                <td>String</td>
+                <td>Not Null, Unique</td>
+            </tr>
+        </tbody>
+    </table>
+    <h3> Secondary Tag Schema </h3>
+    <table>
+        <thead>
+            <th>Column Name</th>
+            <th>Column Type</th>
+            <th>Constraints</th>
+        </thead>
+        <tbody>
+            <tr>
+                <td>sec_tag_id</td>
+                <td>Integer</td>
+                <td>Primary Key, Auto Increment</td>
+            </tr>
+            <tr>
+                <td>sec_tag_name</td>
+                <td>String</td>
+                <td>Not Null, Unique</td>
+            </tr>
+        </tbody>
+    </table>
+    <h3> Ticket Table Schema </h3>
+    <table>
+        <thead>
+            <th>Column Name</th>
+            <th>Column Type</th>
+            <th>Constraints</th>
+        </thead>
+        <tbody>
+            <tr>
+                <td>ticket_id</td>
+                <td>Integer</td>
+                <td>Primary Key, Auto Increment</td>
+            </tr>
+            <tr>
+                <td>user_id</td>
+                <td>Integer</td>
+                <td>Foreign Key(User.user_id)</td>
+            </tr>
+            <tr>
+                <td>title</td>
+                <td>String</td>
+                <td>Not Null, Unique</td>
+            </tr>
+            <tr>
+                <td>description</td>
+                <td>String</td>
+                <td>Not Null</td>
+            </tr>
+            <tr>
+                <td>ticket_status</td>
+                <td>String</td>
+                <td>Not Null, Default=unresolved</td>
+            </tr>
+            <tr>
+                <td>subject_name</td>
+                <td>String</td>
+                <td>Not Null, Foreign Key(Subject_Tag.subject_name)</td>
+            </tr>
+            <tr>
+                <td>sec_tag_name</td>
+                <td>String</td>
+                <td>Foreign Key(Secondary_Tag.sec_tag_name)</td>
+            </tr>
+        </tbody>
+    </table>
+    <h3> Table likes Schema </h3>
+    <table>
+        <thead>
+            <th>Column Name</th>
+            <th>Column Type</th>
+            <th>Constraints</th>
+        </thead>
+        <tbody>
+            <tr>
+                <td>ticket_id</td>
+                <td>Integer</td>
+                <td>Primary Key, Foreign Key(Ticket.ticket_id)</td>
+            </tr>
+            <tr>
+                <td>user_id</td>
+                <td>Integer</td>
+                <td>Primary Key, Foreign Key(User.user_id)</td>
+            </tr>
+        </tbody>
+    </table>
+    <h3> Response Table Schema </h3>
+    <table>
+        <thead>
+            <th>Column Name</th>
+            <th>Column Type</th>
+            <th>Constraints</th>
+        </thead>
+        <tbody>
+            <tr>
+                <td>response_id</td>
+                <td>Integer</td>
+                <td>Primary Key, Auto Increment</td>
+            </tr>
+            <tr>
+                <td>ticket_id</td>
+                <td>Integer</td>
+                <td>Foreign Key(Ticket.ticket_id)</td>
+            </tr>
+            <tr>
+                <td>user_id</td>
+                <td>Integer</td>
+                <td>Foreign Key(User.user_id)</td>
+            </tr>
+            <tr>
+                <td>response</td>
+                <td>String</td>
+                <td>Not Null</td>
+            </tr>
+            <tr>
+                <td>isAnswer</td>
+                <td>Boolean</td>
+                <td>Not Null</td>
+            </tr>
+        </tbody>
+    </table>
+    <h3> Error Codes </h3>
+    <table>
+        <thead>
+            <th>Resource</th>
+            <th>Error Code</th>
+            <th>Message</th>
+        </thead>
+        <tbody>
+            <tr>
+                <td>LOGIN</td>
+                <td>USER001</td>
+                <td>Email is required and must be a non empty string.</td>
+            </tr>
+            <tr>
+                <td>LOGIN</td>
+                <td>USER002</td>
+                <td>Password is required and must be string with length>4.</td>
+            </tr>
+            <tr>
+                <td>LOGIN</td>
+                <td>USER003</td>
+                <td>Username is required and must be a non empty string.</td>
+            </tr>
+            <tr>
+                <td>LOGIN</td>
+                <td>USER004</td>
+                <td>Role is required and must be a non empty string.</td>
+            </tr>
+            <tr>
+                <td>STAFF</td>
+                <td>STAFF001</td>
+                <td>Tag-id must be provided.</td>
+            </tr>
+            <tr>
+                <td>STAFF</td>
+                <td>STAFF002</td>
+                <td>Valid Subject-id is required.</td>
+            </tr>
+            <tr>
+                <td>TAG</td>
+                <td>TAG001</td>
+                <td>Tag_name should be non-empty string.</td>
+            </tr>
+            <tr>
+                <td>TAG</td>
+                <td>TAG002</td>
+                <td>Subject_name already exists.</td>
+            </tr>
+            <tr>
+                <td>TAG</td>
+                <td>TAG003</td>
+                <td>Secondary tag name already exists.</td>
+            </tr>
+            <tr>
+                <td>TAG</td>
+                <td>TAG004</td>
+                <td>Subject tag cannot be deleted.</td>
+            </tr>
+            <tr>
+                <td>TAG</td>
+                <td>TAG005</td>
+                <td>The url should contain secondary.</td>
+            </tr>
+            <tr>
+                <td>TICKET</td>
+                <td>TICKET001</td>
+                <td>Either user_id or action type is missing.</td>
+            </tr>
+            <tr>
+                <td>TICKET</td>
+                <td>TICKET002</td>
+                <td>Ticket need to be resolved before marking as FAQ.</td>
+            </tr>
+            <tr>
+                <td>TICKET</td>
+                <td>TICKET003</td>
+                <td>Some data required for creating ticket is missing.</td>
+            </tr>
+            <tr>
+                <td>TICKET</td>
+                <td>TICKET004</td>
+                <td>Secondary tag entered is not available.</td>
+            </tr>
+            <tr>
+                <td>TICKET</td>
+                <td>TICKET005</td>
+                <td>A student cannot mark the ticket as FAQ.</td>
+            </tr>
+            <tr>
+                <td>TICKET</td>
+                <td>TICKET006</td>
+                <td>Invalid subject</td>
+            </tr>
+            <tr>
+                <td>RESPONSE</td>
+                <td>RESPONE001</td>
+                <td>Invalid ticket id</td>
+            </tr>
+            <tr>
+                <td>RESPONSE</td>
+                <td>RESPONE002</td>
+                <td>Invalid response id</td>
+            </tr>
+            <tr>
+                <td>RESPONSE</td>
+                <td>RESPONE003</td>
+                <td>Either user id or response is missing in the body</td>
+            </tr>
+            <tr>
+                <td>RESPONSE</td>
+                <td>RESPONE004</td>
+                <td>'isAnswer' field is missing or invalid format</td>
+            </tr>
+            <tr>
+                <td>RESPONSE</td>
+                <td>RESPONE005</td>
+                <td>'ticket_status' field is missing or invalid format</td>
+            </tr>
+            <tr>
+                <td>RESPONSE</td>
+                <td>RESPONE006</td>
+                <td>Invalid value for ticket_status, it should be either 'resolved' or 'unresolved'</td>
+            </tr>
+        </tbody>
+    </table>
+  version: 1.0.11
+servers:
+  - url: http://127.0.0.1:5500
+  - url: http://teamfmm.pythonanywhere.com
+tags:
+  - name: login
+    description: Login Manager API
+  - name: Role
+    description: Role Manager API
+  - name: Ticket
+    description: Ticket Manager API
+  - name: Tag
+    description: Tag Manager API
+  - name: Response
+    description: Response API for Ticket Manager
+paths:
+  /api/login/{email}:
+    summary: test.
+    description: End point to read, update and delete a User data for the given email.
+    get:
+      tags:
+        - login
+      description: Operation to Read User details.
+      operationId: getUser
+      parameters:
+        - in: path
+          name: email
+          description: Enter the email-id of the staff whose data is to be fetched.
+          required: true
+          schema:
+            type: string
+            example: user1@gmail.com
+      responses:
+        "200":
+          description: Request Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
+          description: User not found
+        "500":
+          description: Internal Server Error
+    put:
+      tags:
+        - login
+      description: Operation to Edit User details
+      operationId: editUser
+      parameters:
+        - in: path
+          name: email
+          description: Enter the email-id of the staff whose data is to be edited.
+          required: true
+          schema:
+            type: string
+            example: user1@gmail.com
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  example: password123
+                role:
+                  type: string
+                  example: staff
+      responses:
+        "202":
+          description: Request Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_code:
+                    type: string
+                  error_message:
+                    type: string
+        "404":
+          description: User not found
+        "500":
+          description: Internal Server Error
+    delete:
+      tags:
+        - login
+      description: Operation to Delete User details
+      operationId: deleteUser
+      parameters:
+        - in: path
+          name: email
+          description: Enter the email-id of the staff whose data is to be delete.
+          required: true
+          schema:
+            type: string
+            example: user1@gmail.com
+      responses:
+        "200":
+          description: Request Successful
+        "404":
+          description: User not found
+        "500":
+          description: Internal Server Error
+  /api/register:
+    post:
+      tags:
+        - login
+      description: >-
+        Operation to Create a new User details. When `role=staff` subject_id is
+        must but not required for `role=student`.
+      operationId: newUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: user1
+                email:
+                  type: string
+                  example: user1@gmail.com
+                password:
+                  type: string
+                  example: abcd3
+                role:
+                  type: string
+                  example: student
+      responses:
+        "201":
+          description: Request Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_code:
+                    type: string
+                  error_message:
+                    type: string
+        "404":
+          description: User not found
+        "409":
+          description: Given email is used by another user.
+        "500":
+          description: Internal Server Error
+  /api/role:
+    get:
+      tags:
+        - Role
+      description: Operation to Read Staff details.
+      operationId: getStaffData
+      parameters:
+        - in: query
+          name: status
+          description: Provide the status to filter staff's data based on it.
+          schema:
+            type: string
+          examples:
+            "null":
+              value: ""
+            "true":
+              value: 1
+            "false":
+              value: 0
+      responses:
+        "200":
+          description: Request Successful
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Role"
+        "404":
+          description: No staff Data found
+        "500":
+          description: Internal Server Error
+  /api/role/{user_id}:
+    put:
+      tags:
+        - Role
+      description: Operation to change `status` or `subject-id` or both of the Staff.
+      operationId: editStaffData
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: string
+            example: 1
+          description: Enter the user-id for the staff's data to edit.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subject_id:
+                  type: integer
+                  example: 1
+                status:
+                  type: boolean
+                  example: true
+      responses:
+        "202":
+          description: Request Successful
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/Role"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_code:
+                    type: string
+                  error_message:
+                    type: string
+        "404":
+          description: No staff Data found
+        "500":
+          description: Internal Server Error
+    delete:
+      tags:
+        - Role
+      description: Operation to delete data of the Staff.
+      operationId: deleteStaffData
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: string
+            example: 2
+          description: Enter the user-id for the staff's data to be deleted.
+      responses:
+        "200":
+          description: Request Successful
+        "404":
+          description: No staff Data found
+        "500":
+          description: Internal Server Error
+  /api/subject/{subject_name}:
+    description: Endpoint to get the ticket details for a particular subject
+    get:
+      operationId: getTickets
+      description: >-
+        Operation to get all the tickets that satisfies the parameter values
+        such as `FAQ`, `ResolvedStatus`,`limit`(to limit number of tickets in
+        the data) and `search` keywords.
+      tags:
+        - Ticket
+      parameters:
+        - in: path
+          name: subject_name
+          required: true
+          schema:
+            type: string
+            example: MLP
+        - in: query
+          name: ResolvedStatus
+          description: >-
+            Mention the status of the ticket. If it is resolved, type `True`
+            otherwise `False`.
+          required: false
+          schema:
+            type: string
+            example: "False"
+        - in: query
+          name: FAQ
+          required: false
+          description: >-
+            Mention the type of the ticket. If it is FAQ, type `True` otherwise
+            `False`.
+          schema:
+            type: string
+            example: "False"
+        - in: query
+          name: TagName
+          required: false
+          description: Mention the secondary tag name of the ticket.
+          schema:
+            type: string
+            example: week-1
+        - in: query
+          name: limit
+          required: false
+          description: >-
+            Limit the number of tickets in the response. The number should be
+            integer and greater than zero.
+          schema:
+            type: integer
+            example: 5
+        - in: query
+          name: search
+          required: false
+          description: Mention the keywords in the ticket.
+          schema:
+            type: string
+            example: title
+      responses:
+        "200":
+          description: Request Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ticket"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_code:
+                    type: string
+                  error_message:
+                    type: string
+        "404":
+          description: Tickets not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_code:
+                    type: string
+                  error_message:
+                    type: string
+        "500":
+          description: Internal server error
+  /api/subject/ticket/{ticket_id}:
+    description: End point to update and delete a ticket details.
+    put:
+      tags:
+        - Ticket
+      description: >-
+        Operation to Edit Ticket details. The action variable can contain string
+        `like`,`faq` or `notfaq`
+      operationId: editTicket
+      parameters:
+        - in: path
+          name: ticket_id
+          required: true
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  example: like
+                user_id:
+                  type: integer
+                  example: 1
+      responses:
+        "200":
+          description: Request Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ticket"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_code:
+                    type: string
+                  error_message:
+                    type: string
+        "404":
+          description: Ticket not found
+        "500":
+          description: Internal Server Error
+    delete:
+      tags:
+        - Ticket
+      description: Operation to Delete User details
+      operationId: deleteTicket
+      parameters:
+        - in: path
+          name: ticket_id
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        "200":
+          description: Request Successful
+        "404":
+          description: Ticket not found
+        "500":
+          description: Internal Server Error
+  /api/subject/{tag_name}:
+    post:
+      tags:
+        - Ticket
+      description: Operation to Create a new ticket.
+      operationId: newTicket
+      parameters:
+        - in: path
+          name: tag_name
+          required: true
+          schema:
+            type: string
+            example: BA
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: adjusted R-squared
+                description:
+                  type: string
+                  example: >-
+                    In a multiple linear regression with 4 explanatory
+                    variables, you find that R-squared value is 0.74. The number
+                    of observations is 25. What is the value of adjusted
+                    R-squared?
+                secondary_tag:
+                  type: string
+                  example: week-3
+                user_id:
+                  type: integer
+                  example: 1
+      responses:
+        "201":
+          description: Request Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ticket"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_code:
+                    type: string
+                  error_message:
+                    type: string
+        "404":
+          description: Subject not found
+        "409":
+          description: Duplicate title for the Subject
+        "500":
+          description: Internal Server Error
+  /api/tag/{tag_type}/{tag_id}:
+    description: End point to read, update and delete tags
+    get:
+      tags:
+        - Tag
+      description: >-
+        Operation to Read Tag details.  Tag type can be `subject` or
+        `secondary`.<br><br> The json object returned can contain two types of
+        responses having either only subject data with  `"sec_id":0 and
+        "sec_name":null` or secondary tag detail with `"subject_id":0 and
+        "subject_name":null,`
+      operationId: getTag
+      parameters:
+        - in: path
+          name: tag_type
+          required: true
+          schema:
+            type: string
+            example: subject
+        - in: path
+          name: tag_id
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        "200":
+          description: Request Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tag"
+        "404":
+          description: Tag not found
+        "500":
+          description: Internal Server Error
+    put:
+      tags:
+        - Tag
+      description: Operation to Edit Tag Name
+      operationId: editTag
+      parameters:
+        - in: path
+          name: tag_type
+          required: true
+          schema:
+            type: string
+            example: subject
+        - in: path
+          name: tag_id
+          required: true
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tag_name:
+                  type: string
+                  example: MLT
+      responses:
+        "202":
+          description: Request Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tag"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_code:
+                    type: string
+                  error_message:
+                    type: string
+        "404":
+          description: Subject or Secondary tag not found
+        "500":
+          description: Internal Server Error
+    delete:
+      tags:
+        - Tag
+      description: Operation to Delete Tag details
+      operationId: deleteTag
+      parameters:
+        - in: path
+          name: tag_type
+          required: true
+          schema:
+            type: string
+            example: subject
+        - in: path
+          name: tag_id
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        "200":
+          description: Request Successful
+        "404":
+          description: Tag not found
+        "500":
+          description: Internal Server Error
+  /api/tag/{tag_type}:
+    get:
+      tags:
+        - Tag
+      description: Operation to Read all Tags. Tag type can be `subject` or `secondary`
+      operationId: getTags
+      parameters:
+        - in: path
+          name: tag_type
+          required: true
+          schema:
+            type: string
+            example: subject
+      responses:
+        "200":
+          description: Request Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TagList"
+        "404":
+          description: User not found
+        "500":
+          description: Internal Server Error
+    post:
+      tags:
+        - Tag
+      description: Operation to Create a new Tag.The tag_type can be `subject` or `secondary`
+      operationId: newTag
+      parameters:
+        - in: path
+          name: tag_type
+          required: true
+          schema:
+            type: string
+            example: subject
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tag_name:
+                  type: string
+                  example: BDM
+      responses:
+        "201":
+          description: Request Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tag"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_code:
+                    type: string
+                  error_message:
+                    type: string
+        "500":
+          description: Internal Server Error
+  /api/response/{ticket_id}:
+    description: Endpoint to get all the responses for the given ticket id.
+    get:
+      tags:
+        - Response
+      operationId: getResponses
+      parameters:
+        - in: path
+          name: ticket_id
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        "200":
+          description: Request Suceessful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_list"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_code:
+                    type: string
+                  error_message:
+                    type: string
+        "404":
+          description: Ticket not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_code:
+                    type: string
+                  error_message:
+                    type: string
+        "500":
+          description: Internal server error
+    post:
+      tags:
+        - Response
+      description: Endpoint to add a new response to the ticket
+      operationId: newResponse
+      parameters:
+        - in: path
+          name: ticket_id
+          required: True
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                  example: 1
+                response:
+                  type: string
+                  example: Response of the ticket
+      responses:
+        "201":
+          description: Request successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_list"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_code:
+                    type: string
+                  error_message:
+                    type: string
+        "404":
+          description: Ticket not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_code:
+                    type: string
+                  error_message:
+                    type: string
+        "500":
+          description: Internal server error
+
+  /api/response/{ticket_id}/{response_id}:
+    put:
+      tags:
+        - Response
+      description: Endpoint to add a new response to the ticket
+      operationId: editResponse
+      parameters:
+        - in: path
+          name: ticket_id
+          required: True
+          schema:
+            type: integer
+            example: 1
+        - in: path
+          name: response_id
+          required: True
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                isAnswer:
+                  type: boolean
+                  example: True
+                ticket_status:
+                  type: string
+                  example: resolved
+      responses:
+        "200":
+          description: Request successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ticket_id:
+                    type: integer
+                    example: 1
+                  title:
+                    type: string
+                    example: Title of the ticket
+                  description:
+                    type: string
+                    example: Description of the ticket
+                  isFAQ:
+                    type: boolean
+                    example: False
+                  ticket_status:
+                    type: string
+                    example: resolved
+                  sec_name:
+                    type: string
+                    example: week-1
+                  likes:
+                    type: integer
+                    example: 10
+                  response_list:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        response_id:
+                          type: integer
+                          example: 1
+                        user_id:
+                          type: integer
+                          example: 3
+                        response:
+                          type: string
+                          example: Response for the ticket
+                        isAnswer:
+                          type: boolean
+                          example: True
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_code:
+                    type: string
+                  error_message:
+                    type: string
+        "404":
+          description: Ticket not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_code:
+                    type: string
+                  error_message:
+                    type: string
+        "500":
+          description: Internal server error
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    User:
+      type: object
+      properties:
+        user_id:
+          type: integer
+          example: 1
+        username:
+          type: string
+          example: user1
+        email:
+          type: string
+          example: user1@gmail.com
+        password:
+          type: string
+          example: abc
+        role:
+          type: string
+          example: student
+    Role:
+      type: object
+      properties:
+        user_id:
+          type: integer
+          example: 1
+        username:
+          type: string
+          example: staff1
+        email:
+          type: string
+          example: staff1@gmail.com
+        approved:
+          type: boolean
+          example: true
+        role:
+          type: string
+          example: staff
+        subject_id:
+          type: integer
+          example: 1
+        subject_name:
+          type: string
+          example: BDM
+    Ticket:
+      type: object
+      properties:
+        ticket_id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: Title-1
+        description:
+          type: string
+          example: Desc-1
+        subject_name:
+          type: string
+          example: MLP
+        sec_name:
+          type: string
+          example: week-1
+        isFAQ:
+          type: boolean
+          example: false
+        ticket_status:
+          type: string
+          example: unresolved
+        likes:
+          type: integer
+          example: 0
+    Tag:
+      type: object
+      properties:
+        subject_id:
+          type: integer
+          example: 1
+        subject_name:
+          type: string
+          example: BA
+        sec_id:
+          type: integer
+          example: 0
+        sec_name:
+          type: string
+          example: null
+    TagList:
+      type: array
+      xml:
+        name: tags
+        wrapped: true
+      items:
+        $ref: "#/components/schemas/Tag"
+    Response:
+      type: object
+      properties:
+        response_id:
+          type: integer
+          example: 1
+        user_id:
+          type: integer
+          example: 3
+        username:
+          type: string
+          example: staff1
+        response:
+          type: string
+          example: Response given by the staff/student to the correspoinding ticket
+        isAnswer:
+          type: boolean
+          example: false
+
+    Response_list:
+      type: object
+      properties:
+        ticket_id:
+          type: integer
+          example: 1
+        user_id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: Title of the ticket
+        description:
+          type: string
+          example: Description of the ticket
+        isFAQ:
+          type: boolean
+          example: false
+        ticket_status:
+          type: string
+          example: unresolved
+        subject_name:
+          type: string
+          example: MLT
+        sec_name:
+          type: string
+          example: week-1
+        likes:
+          type: integer
+          example: [1, 5]
+        response_list:
+          type: array
+          items:
+            type: object
+            $ref: "#/components/schemas/Response"
