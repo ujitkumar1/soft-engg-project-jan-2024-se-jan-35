@@ -1,0 +1,261 @@
+## Jaadu API Documentation (by Team Dhoop)
+
+This API describes the endpoints available for Jaadu API which integrates ticket management app with discourse API for SE Project. For more information contact us here: mailto:21f1003251@ds.study.iitm.ac.in.
+
+**Version:** 0.0.1
+
+**Server:** http://127.0.0.1:5000
+
+### Support Staff Tags:
+
+* send_gchat_msg
+* postSubmitPreviousDiscussionLinks
+* postCheckFlaggedPosts
+* makeThreadFav
+
+### Students Tags:
+
+* profile
+
+### Support Manager Tags:
+
+* getSpamUser
+* postCheckFlaggedPosts
+
+## Endpoints
+
+### /send_gchat_msg
+
+This endpoint is used to send a message to Gchat if the priority measure is beyond 5.
+
+**Request Body:**
+
+```json
+{
+  "ticket_id": (integer), (required)
+  "priority_measure": (integer), (required)
+  "message": (string), (optional)
+  "webhook_url": (string, format: uri), (optional)
+}
+```
+
+**Example Request Body:**
+
+```json
+{
+  "ticket_id": 3,
+  "priority_measure": 6,
+  "message": "Priority measure exceeded 5. Immediate action required!",
+  "webhook_url": "https://example.com/gchat/webhook"
+}
+```
+
+**Response:**
+
+* **200:** Successfully posted ticket and checked priority measure.
+    * **message:** (string) - Message posted successfully.
+* **400:** Invalid request body.
+    * **message:** (string) - Invalid request body. Please provide valid ticket ID and priority measure.
+* **500:** Internal server error.
+    * **message:** (string) - Internal server error. Please try again later.
+
+### /submit_previous_discussion_links
+
+This endpoint is used to submit clickable links for a previous discussion.
+
+**Request Body:**
+
+```json
+{
+  "post_id": (integer), (required)
+  "discussion_links": [ (string, format: uri) ], (required)
+}
+```
+
+**Example Request Body:**
+
+```json
+{
+  "post_id": 123,
+  "discussion_links": ["https://example.com/previous_discussion1"]
+}
+```
+
+**Response:**
+
+* **200:** Successfully submitted previous discussion links.
+    * **message:** (string) - Previous discussion links submitted successfully.
+* **400:** Invalid request body.
+    * **message:** (string) - Invalid request body. Please provide a valid post ID.
+* **500:** Internal server error.
+    * **message:** (string) - Internal server error. Please try again later.
+
+### /check_flagged_posts
+
+This endpoint is used to check for flagged posts and send a message to the Support Manager.
+
+**Request Body:**
+
+```json
+{
+  "post_id": (integer), (required)
+  "flag_message": (string), (required)
+  "user_id": (integer), (required)
+  "message": (string), (optional)
+  "webhook_url": (string, format: uri), (optional)
+}
+```
+
+**Example Request Body:**
+
+```json
+{
+  "post_id": 123,
+  "flag_message": "This post contains inappropriate content.",
+  "user_id": 456,
+  "message": "A post has been flagged. Please check immediately.",
+  "webhook_url": "https://example.com/support_manager/webhook"
+}
+```
+
+**Response:**
+
+* **200:** Successfully sent message to Support Manager about the flagged post.
+    * **message:** (string) - Message sent to Support Manager about the flagged post.
+* **400:** Invalid request body.
+    * **message:** (string) - Invalid request body. Please provide valid post ID, flag message, and user ID.
+* **500:** Internal server error.
+    * **message:** (string) - Internal server error. Please try again later.
+
+### /profile
+
+This endpoint provides details of a specific user by taking the user ID as a parameter. Accessible to all users.
+
+**Request Body:**
+
+```json
+{
+  "user_id": (integer), (required)
+}
+```
+
+**Example Request Body:**
+
+```json
+{
+  "user_id": 1001
+}
+```
+
+
+
+## Jaadu API Documentation (v0.0.1)
+
+This API provides functionalities for a ticket management system integrated with Discourse for student and support staff users.
+
+### Base URL
+
+http://127.0.0.1:5000
+
+### Authentication
+
+Some endpoints require authentication using headers:
+
+* `api-key`: Your API key for accessing the system.
+* `api-username`: Your username for authentication.
+
+### Tags
+
+* `Students`: Endpoints accessible to students.
+* `Support Staff`: Endpoints accessible to support staff members.
+* `Support Manager`: Endpoints accessible to support managers.
+* `Analytics`: Endpoints for retrieving analytical data.
+
+### Endpoints
+
+**1. Lock a Post (/posts/{id}/locked.json: put)**
+
+* Tags: Support Staff
+* Operation ID: lockPost
+* Parameters:
+    * `id` (path): Unique identifier of the post to lock (required).
+* Request Body:
+    * Content-Type: application/json
+    * Schema:
+        * `locked` (string, required): Set to `"true"` to lock the post.
+* Responses:
+    * 200: Post updated successfully.
+        * Response Body:
+            * `locked` (boolean): Confirmation of locked state.
+    * 400: Invalid request body or missing required parameters.
+
+**2. Create a Post (/posts: post)**
+
+* Tags: Students
+* Summary: Create a new post and tag relevant people.
+* Request Body:
+    * Content-Type: application/json
+    * Schema:
+        * `title` (string, required): Title of the post.
+        * `description` (string): Description of the post.
+        * `tags` (array, required): Array of usernames to tag in the post.
+* Responses:
+    * 201: Post created successfully.
+    * 400: Invalid input or missing required parameters.
+
+**3. Search for Users (/search_users: get)**
+
+* Tags: Students
+* Summary: Search for users to tag in a post.
+* Parameters:
+    * `search_term` (query, required): The search term for usernames.
+* Responses:
+    * 200: Search results returned.
+        * Response Body:
+            * Array of objects with user information:
+                * `username` (string): Username of the user.
+                * `id` (string): Unique identifier of the user.
+    * 404: No users found matching the search term.
+
+**4. Send a Google Chat Message (/messages: post)**
+
+* Tags: Students
+* Summary: Send a text message to a Google Chat thread.
+* Request Body:
+    * Content-Type: application/json
+    * Schema (refer to `ChatMessage` model definition below).
+* Responses:
+    * 201: Message sent successfully.
+    * 400: Invalid input or missing required parameters.
+
+**5. Get List of Inactive Support Staff (/support_staff/activity_status: get)**
+
+* Tags: Support Manager
+* Summary: Retrieve a list of support staff members who are not currently active.
+* Responses:
+    * 200: An array of objects with staff activity status information (refer to `StaffActivityStatus` model definition below).
+    * 400: Invalid request.
+    * 500: Internal server error.
+
+**6. Get Thread Status Chart (/analytics/all_issues: get)**
+
+* Tags: Analytics
+* Operation ID: getThreadStatusChart
+* Summary: Get a pie chart showing the distribution of resolved and pending threads, along with a breakdown by category.
+* Responses:
+    * 200: Successfully retrieved thread status data.
+        * Response Body:
+            * `image` (string, format: binary): Base64 encoded image data for the pie chart.
+            * `resolved` (integer): Number of resolved threads.
+            * `pending` (integer): Number of pending threads.
+            * `categories` (array): Array of objects with category information.
+                * `name` (string): Name of the category.
+                * `open_threads` (integer): Number of open threads in the category.
+    * 400: Invalid request.
+    * 500: Internal server error.
+
+**7. Get Resolved Threads Time Grouping Chart (/analytics/isses_resolved: get)**
+
+* Tags: Analytics
+* Operation ID: getIssuesResolved
+* Summary: Get a pie chart showing the distribution of resolved threads across different time groups (e.g., 1-3 hrs, 4-8 hrs, etc.),
